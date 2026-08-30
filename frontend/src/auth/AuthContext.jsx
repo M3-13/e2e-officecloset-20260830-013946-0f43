@@ -54,7 +54,13 @@ async function authenticate(kind, email, password) {
   }
 
   const data = await response.json();
-  return { token: data.access_token, user: data.user };
+  const accessToken = data?.access_token ?? data?.token ?? null;
+  if (!accessToken) {
+    throw new Error(
+      "Der Server hat kein Zugriffs-Token geliefert. Bitte versuche es erneut."
+    );
+  }
+  return { token: accessToken, user: data?.user ?? null };
 }
 
 export function AuthProvider({ children }) {
